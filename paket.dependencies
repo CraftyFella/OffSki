@@ -1,0 +1,7 @@
+source https://www.nuget.org/api/v2/
+source http://nuget.internal.comparethemarket.local/nuget
+source https://ci.appveyor.com/nuget/mfloryan-5o7478w9cf6s
+source https://ci.ctmers.net/httpAuth/app/nuget/v1/FeedService.svc
+
+nuget Chronic
+nuget nunit

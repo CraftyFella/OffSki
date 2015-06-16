@@ -1,0 +1,5 @@
+NUGET
+  remote: https://www.nuget.org/api/v2
+  specs:
+    Chronic (0.3.1)
+    NUnit (2.6.4)

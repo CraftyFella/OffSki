@@ -1,0 +1,32 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{42D35731-6D2A-4CB0-ABDC-49812026EE4E}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\paket.dependencies = ..\..\paket.dependencies
+	EndProjectSection
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "OffSki.Api", "OffSki.Api\OffSki.Api.fsproj", "{AD0799DC-CB9C-4836-9DA0-2D99A6D20C25}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "OffSki.Test", "..\OffSki.Test\OffSki.Test.fsproj", "{8C1C1DB1-2EE2-461D-B950-A294CFB07CBA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AD0799DC-CB9C-4836-9DA0-2D99A6D20C25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD0799DC-CB9C-4836-9DA0-2D99A6D20C25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD0799DC-CB9C-4836-9DA0-2D99A6D20C25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD0799DC-CB9C-4836-9DA0-2D99A6D20C25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C1C1DB1-2EE2-461D-B950-A294CFB07CBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C1C1DB1-2EE2-461D-B950-A294CFB07CBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C1C1DB1-2EE2-461D-B950-A294CFB07CBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C1C1DB1-2EE2-461D-B950-A294CFB07CBA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
