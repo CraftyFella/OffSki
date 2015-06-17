@@ -1,60 +1,57 @@
 ﻿module ``storing a holiday``
 
-open Messages
 open System
-
 open System.Text.RegularExpressions
 open Chronic
 
+exception InvalidCommand
+type Command = Add
+let createCommand = function
+    | "add" -> Add
+    | _ -> raise InvalidCommand
+
 type Date = { Year : int; Month : int; Day : int }
-type Slot = { Start : Date; End : Date }
+let createDate year month day = {Year = year ; Month = month ; Day = day}
+
+type Slot = { When : Date; Days : int }
+let createSlot days when' = {When = when'; Days = days} 
 
 let toDate (s : DateTime) =
     { Year = s.Year; Month = s.Month; Day = s.Day }
 
-let toSlot (start : DateTime, finish : DateTime) = 
-    let startDate = start |> toDate
-    let finishDate = finish |> toDate
-    { Start = startDate;
-     End = finishDate }
-
-let singleToSlot (start : DateTime) = 
-    toSlot(start, start.AddDays 1.)
+let tomorrow = DateTime.Today.AddDays 1. |> toDate |> createSlot 1
+let today = DateTime.Today |> toDate |> createSlot 1
 
 let spanToSlot (s : Span) = 
-    let start = s.Start.Value
-    let finish = s.End.Value
-    toSlot(start, finish)
-
-let tomorrow = DateTime.Today.AddDays(1.) |> singleToSlot
-let today = DateTime.Today |> singleToSlot
-
-type Command = 
-    | AddHoliday of Slot * string option
+    let days = (s.End.Value - s.Start.Value).TotalDays |> int
+    s.Start.Value |> toDate |> createSlot days
     
-let parseDate text =
+let dateToSlot =
     let parser = Parser()
-    parser.Parse text
+    parser.Parse >> spanToSlot
     
 let parseMessage text = 
     let parts = Regex.Match(text, "(?<command>\w+)(?<date>[^#]*)#?(?<note>.*)").Groups
-    let command = parts.["command"].Value
-    let slot = parts.["date"].Value |> parseDate |> spanToSlot
+    let command = parts.["command"].Value |> createCommand
+    let slot = parts.["date"].Value |> dateToSlot
     
     let note = 
         match parts.["note"].Value with
         | "" | null -> None
         | n -> Some n
 
-    AddHoliday(slot, note)
+    (command, slot, note)
 
 [<Test>]
-let ``add with note``() = parseMessage "add tomorrow #hospital" == AddHoliday(tomorrow, Some "hospital")
+let ``add tomorrow with note``() = parseMessage "add tomorrow #hospital" == (Add, tomorrow, Some "hospital")
 
 [<Test>]
-let ``add without note``() = parseMessage "add tomorrow" == AddHoliday(tomorrow, None)
+let ``add tomorrow without note``() = parseMessage "add tomorrow" == (Add, tomorrow, Option<string>.None)
+
+[<Test>]
+let ``add today with note``() = parseMessage "add today #hospital" == (Add, today, Some "hospital")
 
 [<Test>]
 let ``add with complex date``() = 
-    let thirdJuly = new DateTime(2015, 7, 3) |> singleToSlot
-    parseMessage "add 3rd July" == AddHoliday(thirdJuly, None)
+    let thirdJulySlot = createDate 2015 7 3 |> createSlot 1
+    parseMessage "add 3rd July" == (Add, thirdJulySlot, Option<string>.None)
