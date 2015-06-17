@@ -107,3 +107,8 @@ let ``add with complex date``() =
 let ``add with date range``() = 
     let thirdJulySlotToFifth = createDate 2015 7 3 |> createSlot 3
     parseMessage "add 3rd July - 5th July" == (Add, thirdJulySlotToFifth, Option<string>.None)
+
+[<Test>]
+let ``add with date range with note``() = 
+    let thirdJulySlotToFifth = createDate 2015 7 3 |> createSlot 3
+    parseMessage "add 3rd July - 5th July #Magaloof" == (Add, thirdJulySlotToFifth, Some "Magaloof")
