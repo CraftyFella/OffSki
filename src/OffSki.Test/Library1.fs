@@ -4,9 +4,9 @@ open System
 open System.Text.RegularExpressions
 open Chronic
 
-exception InvalidCommand
-
-type Command = Add
+type Command =
+  | Add 
+  | Unknown of string
 
 type Date = 
     { Year : int
@@ -53,26 +53,29 @@ let split (c : string) (text : string) = text.Split([| c |], StringSplitOptions.
 let parseCommand = 
     function 
     | "add" -> Add
-    | _ -> raise InvalidCommand
+    | command -> Unknown command
 
 let parseSlot text = 
 
     let dates = text |> split "-"
 
-    let from = 
-        dates.[0]
-        |> textToSpan
-        |> spanToDateTime
-    
-    let days = 
-        match dates with
-        | [|_; date|] -> date |> textToSpan |> spanToDateTime
-        | _ -> None
-        |> function
-        | Some d -> (d - from.Value).TotalDays |> int |> (+) 1
-        | None -> 1
+    match dates with
+    | [||] -> None
+    | dates ->
+      let from = 
+          dates.[0]
+          |> textToSpan
+          |> spanToDateTime
+      
+      let days = 
+          match dates with
+          | [|_; date|] -> date |> textToSpan |> spanToDateTime
+          | _ -> None
+          |> function
+          | Some d -> (d - from.Value).TotalDays |> int |> (+) 1
+          | None -> 1
 
-    { When = from.Value |> dateTimeToDate; Days = days }
+      Some { When = from.Value |> dateTimeToDate; Days = days }
 
 let parseNote text =
     match text with
@@ -89,30 +92,35 @@ let parseMessage text =
     (command, slot, note)
 
 [<Test>]
-let ``add tomorrow with note``() = parseMessage "add tomorrow #hospital" == (Add, tomorrow, Some "hospital")
+let ``add tomorrow with note``() = parseMessage "add tomorrow #hospital" == (Add, Some tomorrow, Some "hospital")
 
 [<Test>]
-let ``add tomorrow without note``() = parseMessage "add tomorrow" == (Add, tomorrow, Option<string>.None)
+let ``add tomorrow without note``() = parseMessage "add tomorrow" == (Add, Some tomorrow, Option<string>.None)
 
 [<Test>]
-let ``add today with note``() = parseMessage "add today #hospital" == (Add, today, Some "hospital")
+let ``add today with note``() = parseMessage "add today #hospital" == (Add, Some today, Some "hospital")
 
 [<Test>]
 let ``add with complex date``() = 
-    let thirdJulySlot = createDate 2015 7 3 |> createSlot 1
+    let thirdJulySlot = createDate 2015 7 3 |> createSlot 1 |> Some
     parseMessage "add 3rd July" == (Add, thirdJulySlot, Option<string>.None)
 
 [<Test>]
 let ``add with date range``() = 
-    let thirdJulySlotToFifth = createDate 2015 7 3 |> createSlot 3
+    let thirdJulySlotToFifth = createDate 2015 7 3 |> createSlot 3 |> Some
     parseMessage "add 3rd July - 5th July" == (Add, thirdJulySlotToFifth, Option<string>.None)
 
 [<Test>]
 let ``add with date range with note``() = 
-    let thirdJulySlotToFifth = createDate 2015 7 3 |> createSlot 3
+    let thirdJulySlotToFifth = createDate 2015 7 3 |> createSlot 3 |> Some
     parseMessage "add 3rd July - 5th July #Magaloof" == (Add, thirdJulySlotToFifth, Some "Magaloof")
 
 [<Test>]
 let ``add with date range with year and note``() = 
-    let thirdJulySlotToFifth = createDate 2016 7 3 |> createSlot 3
+    let thirdJulySlotToFifth = createDate 2016 7 3 |> createSlot 3 |> Some
     parseMessage "add 3rd July 2016 - 5th July 2016 #Magaloof" == (Add, thirdJulySlotToFifth, Some "Magaloof")
+
+[<Test>]
+let ``unknown command``() =
+    parseMessage "boom" == (Unknown "boom", Option<Slot>.None, Option<string>.None)
+  
