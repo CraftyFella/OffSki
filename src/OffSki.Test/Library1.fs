@@ -38,9 +38,7 @@ let today =
     |> dateTimeToDate
     |> createSlot 1
 
-let spanToDate (s : Span) = s.Start.Value |> dateTimeToDate
-
-let spanToDateTime (s : Span) = 
+let spanToDateTime (s : Span) =
     if s.Start.HasValue then Some s.Start.Value
     else None
 
@@ -59,35 +57,31 @@ let parseSlot text =
 
     let dates = text |> split "-"
 
-    match dates with
-    | [||] -> None
-    | dates ->
-      let from = 
-          dates.[0]
-          |> textToSpan
-          |> spanToDateTime
-      
-      let days = 
-          match dates with
-          | [|_; date|] -> date |> textToSpan |> spanToDateTime
-          | _ -> None
-          |> function
-          | Some d -> (d - from.Value).TotalDays |> int |> (+) 1
-          | None -> 1
+    let from = 
+        dates.[0]
+        |> textToSpan
+        |> spanToDateTime
+    
+    let days = 
+        match dates with
+        | [|_; date|] -> date |> textToSpan |> spanToDateTime
+        | _ -> None
+        |> function
+        | Some d -> (d - from.Value).TotalDays |> int |> (+) 1
+        | None -> 1
 
-      Some { When = from.Value |> dateTimeToDate; Days = days }
+    Some { When = from.Value |> dateTimeToDate; Days = days }
 
-let parseNote text =
-    match text with
-        | "" | null -> None
-        | n -> Some n
+let stringToOption = function
+    | "" -> None
+    | s -> Some s
 
 let parseMessage text = 
     let parts = Regex.Match(text, "(?<command>\w+)(?<date>[^#]*)#?(?<note>.*)").Groups
 
     let command = parts.["command"].Value |> parseCommand
-    let slot = parts.["date"].Value |> parseSlot
-    let note = parts.["note"].Value |> parseNote
+    let slot = parts.["date"].Value |> stringToOption |> Option.bind parseSlot
+    let note = parts.["note"].Value |> stringToOption
         
     (command, slot, note)
 
