@@ -57,21 +57,18 @@ let parseCommand =
 
 let parseSlot text = 
 
-    let dates = text |> split " - "
+    let dates = text |> split "-"
 
     let from = 
         dates.[0]
         |> textToSpan
         |> spanToDateTime
     
-    let to' = 
-        if dates.Length = 1 then
-            None 
-        else 
-            dates.[1] |> textToSpan |> spanToDateTime
-    
     let days = 
-        match to' with
+        match dates with
+        | [|_; date|] -> date |> textToSpan |> spanToDateTime
+        | _ -> None
+        |> function
         | Some d -> (d - from.Value).TotalDays |> int |> (+) 1
         | None -> 1
 
@@ -114,3 +111,8 @@ let ``add with date range``() =
 let ``add with date range with note``() = 
     let thirdJulySlotToFifth = createDate 2015 7 3 |> createSlot 3
     parseMessage "add 3rd July - 5th July #Magaloof" == (Add, thirdJulySlotToFifth, Some "Magaloof")
+
+[<Test>]
+let ``add with date range with year and note``() = 
+    let thirdJulySlotToFifth = createDate 2016 7 3 |> createSlot 3
+    parseMessage "add 3rd July 2016 - 5th July 2016 #Magaloof" == (Add, thirdJulySlotToFifth, Some "Magaloof")
