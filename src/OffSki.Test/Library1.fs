@@ -61,11 +61,10 @@ let textToSpan =
 
 let split (c : string) (text : string) = text.Split([| c |], StringSplitOptions.RemoveEmptyEntries)
 
-let parseMessage text = 
-    let parts = Regex.Match(text, "(?<command>\w+)(?<date>[^#]*)#?(?<note>.*)").Groups
-    let command = parts.["command"].Value |> createCommand
-    let dates = parts.["date"].Value |> split " - "
-    
+let parseSlot text = 
+
+    let dates = text |> split " - "
+
     let from = 
         dates.[0]
         |> textToSpan
@@ -81,13 +80,22 @@ let parseMessage text =
         match to' with
         | Some d -> (d - from.Value).TotalDays |> int |> (+) 1
         | None -> 1
+
+    { When = from.Value |> dateTimeToDate; Days = days }
+
+let parseMessage text = 
+    let parts = Regex.Match(text, "(?<command>\w+)(?<date>[^#]*)#?(?<note>.*)").Groups
+    let command = parts.["command"].Value |> createCommand
+    let date = parts.["date"].Value
+    
+    let slot = parseSlot date
     
     let note = 
         match parts.["note"].Value with
         | "" | null -> None
         | n -> Some n
     
-    (command, { When = from.Value |> dateTimeToDate; Days = days }, note)
+    (command, slot, note)
 
 [<Test>]
 let ``add tomorrow with note``() = parseMessage "add tomorrow #hospital" == (Add, tomorrow, Some "hospital")
