@@ -8,11 +8,6 @@ exception InvalidCommand
 
 type Command = Add
 
-let createCommand = 
-    function 
-    | "add" -> Add
-    | _ -> raise InvalidCommand
-
 type Date = 
     { Year : int
       Month : int
@@ -27,39 +22,38 @@ type Slot =
     { When : Date
       Days : int }
 
-let createSlot days when' = 
-    { When = when'
-      Days = days }
+let createSlot (days : int) (from : Date) = 
+    { When = from; Days = days }
 
-let toDate (s : DateTime) = 
-    { Year = s.Year
-      Month = s.Month
-      Day = s.Day }
+let dateTimeToDate (d : DateTime) = 
+    createDate d.Year d.Month d.Day
 
 let tomorrow = 
     DateTime.Today.AddDays 1.
-    |> toDate
+    |> dateTimeToDate
     |> createSlot 1
 
 let today = 
     DateTime.Today
-    |> toDate
+    |> dateTimeToDate
     |> createSlot 1
 
-let spanToDate (s : Span) = s.Start.Value |> toDate
+let spanToDate (s : Span) = s.Start.Value |> dateTimeToDate
 
 let spanToDateTime (s : Span) = 
     if s.Start.HasValue then Some s.Start.Value
     else None
-
-let dateTimeToDate (d : DateTime) = 
-    createDate d.Year d.Month d.Day
 
 let textToSpan = 
     let parser = Parser()
     parser.Parse
 
 let split (c : string) (text : string) = text.Split([| c |], StringSplitOptions.RemoveEmptyEntries)
+
+let parseCommand = 
+    function 
+    | "add" -> Add
+    | _ -> raise InvalidCommand
 
 let parseSlot text = 
 
@@ -83,18 +77,18 @@ let parseSlot text =
 
     { When = from.Value |> dateTimeToDate; Days = days }
 
-let parseMessage text = 
-    let parts = Regex.Match(text, "(?<command>\w+)(?<date>[^#]*)#?(?<note>.*)").Groups
-    let command = parts.["command"].Value |> createCommand
-    let date = parts.["date"].Value
-    
-    let slot = parseSlot date
-    
-    let note = 
-        match parts.["note"].Value with
+let parseNote text =
+    match text with
         | "" | null -> None
         | n -> Some n
-    
+
+let parseMessage text = 
+    let parts = Regex.Match(text, "(?<command>\w+)(?<date>[^#]*)#?(?<note>.*)").Groups
+
+    let command = parts.["command"].Value |> parseCommand
+    let slot = parts.["date"].Value |> parseSlot
+    let note = parts.["note"].Value |> parseNote
+        
     (command, slot, note)
 
 [<Test>]
