@@ -52,25 +52,12 @@ let parseCommand =
     function 
     | "add" -> Add
     | command -> Unknown command
-
-let parseSlot text = 
-
-    let dates = text |> split "-"
-
-    let from = 
-        dates.[0]
-        |> textToSpan
-        |> spanToDateTime
-    
-    let days = 
-        match dates with
-        | [|_; date|] -> date |> textToSpan |> spanToDateTime
-        | _ -> None
-        |> function
-        | Some d -> (d - from.Value).TotalDays |> int |> (+) 1
-        | None -> 1
-
-    Some { When = from.Value |> dateTimeToDate; Days = days }
+   
+let parseSlot text =
+    match text |> split "-" |> Array.map (textToSpan >> spanToDateTime) |> Array.choose id with
+    | [|from|] -> Some { When = from |> dateTimeToDate ; Days = 1 }
+    | [|from ; to'|] -> Some { When = from |> dateTimeToDate ; Days = (to' - from).TotalDays + 1. |> int }
+    | _ -> None
 
 let stringToOption = function
     | "" -> None
