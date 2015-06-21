@@ -53,21 +53,26 @@ let parseCommand =
     | "add" -> Add
     | command -> Unknown command
    
-let parseSlot text =
-    match text |> split "-" |> Array.map (textToSpan >> spanToDateTime) |> Array.choose id with
+let parseSlot = function
     | [|from|] -> Some { When = from |> dateTimeToDate ; Days = 1 }
     | [|from ; to'|] -> Some { When = from |> dateTimeToDate ; Days = (to' - from).TotalDays + 1. |> int }
     | _ -> None
 
-let stringToOption = function
-    | "" -> None
-    | s -> Some s
+let parseDates = split "-" >> Array.map (textToSpan >> spanToDateTime) >> Array.choose id
+
+let toOption none = function
+    | x when x = none -> None
+    | x -> Some x
+
+let arrayToOption = toOption [||]
+
+let stringToOption = toOption ""
 
 let parseMessage text = 
     let parts = Regex.Match(text, "(?<command>\w+)(?<date>[^#]*)#?(?<note>.*)").Groups
 
     let command = parts.["command"].Value |> parseCommand
-    let slot = parts.["date"].Value |> stringToOption |> Option.bind parseSlot
+    let slot = parts.["date"].Value |> stringToOption |> Option.bind (parseDates >> arrayToOption) |> Option.bind parseSlot
     let note = parts.["note"].Value |> stringToOption
         
     (command, slot, note)
