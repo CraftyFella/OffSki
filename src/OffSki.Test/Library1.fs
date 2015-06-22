@@ -28,15 +28,11 @@ let createSlot (days : int) (from : Date) =
 let dateTimeToDate (d : DateTime) = 
     createDate d.Year d.Month d.Day
 
-let tomorrow = 
-    DateTime.Today.AddDays 1.
-    |> dateTimeToDate
-    |> createSlot 1
+let createDay = dateTimeToDate >> createSlot 1
 
-let today = 
-    DateTime.Today
-    |> dateTimeToDate
-    |> createSlot 1
+let today = createDay DateTime.Today
+
+let tomorrow = DateTime.Today.AddDays 1. |> createDay
 
 let spanToDateTime (s : Span) =
     if s.Start.HasValue then Some s.Start.Value
