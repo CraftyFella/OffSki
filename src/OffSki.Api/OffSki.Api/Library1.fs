@@ -2,6 +2,9 @@
 
 open System
 
+
+type Add = {UserId : string ; Command : string}
+
 //type Date = Date of year : int * month : int * day : int
 //
 //type Team = 
