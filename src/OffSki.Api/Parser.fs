@@ -76,7 +76,9 @@ let parseAdd command =
     | Some s, None -> Slot s |> Add
     | _ -> Add Invalid
 
-let parseOffski text =
-  match text |> parseCommand with
+let handleCommand =
+  function
   | Add _ as command -> parseAdd command
   | Unknown message -> Unknown message 
+
+let parseOffski = parseCommand >> handleCommand
