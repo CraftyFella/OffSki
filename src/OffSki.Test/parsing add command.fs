@@ -14,7 +14,7 @@ let today = DateTime.Today |> createDay
 let tomorrow = DateTime.Today.AddDays 1. |> createDay
 
 [<Test>]
-let ``add tomorrow with note``() = parseOffski "add tomorrow #hospital" == Add(SlotWithNote(tomorrow, "hospital"))
+let ``add tomorrow with note``() = parseOffski "add tomorrow #hospital with son" == Add(SlotWithNote(tomorrow, "hospital with son"))
 
 [<Test>]
 let ``add tomorrow without note``() = parseOffski "add tomorrow" == Add(Slot tomorrow)

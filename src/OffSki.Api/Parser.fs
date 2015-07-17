@@ -25,7 +25,7 @@ let parseCommand message =
     | command :: options ->
       command,
       (options
-       |> String.concat "  "
+       |> String.concat " "
        |> Options.Unknown)
   match command.ToLower() with
   | "add" -> Add options
