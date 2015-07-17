@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{42D357
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "OffSki.Test", "OffSki.Test\OffSki.Test.fsproj", "{8C1C1DB1-2EE2-461D-B950-A294CFB07CBA}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "OffSki.Api", "OffSki.Api\OffSki.Api\OffSki.Api.fsproj", "{AD0799DC-CB9C-4836-9DA0-2D99A6D20C25}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "OffSki.Api", "OffSki.Api\OffSki.Api.fsproj", "{AD0799DC-CB9C-4836-9DA0-2D99A6D20C25}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

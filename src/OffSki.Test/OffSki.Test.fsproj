@@ -44,8 +44,8 @@
     <Compile Include="TestFramework.fs" />
     <None Include="Script.fsx" />
     <None Include="paket.references" />
-    <Compile Include="parsing a command.fs" />
     <Compile Include="storing an offski.fs" />
+    <Compile Include="parsing add command.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
@@ -70,6 +70,12 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <ProjectReference Include="..\OffSki.Api\OffSki.Api.fsproj">
+      <Project>{AD0799DC-CB9C-4836-9DA0-2D99A6D20C25}</Project>
+      <Name>OffSki.Api</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Choose>
     <When Condition="($(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6')) Or ($(TargetFrameworkIdentifier) == 'MonoAndroid') Or ($(TargetFrameworkIdentifier) == 'MonoTouch')">
       <ItemGroup>
@@ -84,13 +90,8 @@
   <ItemGroup>
     <Reference Include="nunit.framework">
       <HintPath>..\..\packages\NUnit\lib\nunit.framework.dll</HintPath>
+      <Private>True</Private>
       <Paket>True</Paket>
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\OffSki.Api\OffSki.Api\OffSki.Api.fsproj">
-      <Project>{AD0799DC-CB9C-4836-9DA0-2D99A6D20C25}</Project>
-      <Name>OffSki.Api</Name>
-    </ProjectReference>
   </ItemGroup>
 </Project>
