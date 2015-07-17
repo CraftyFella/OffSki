@@ -35,7 +35,7 @@ let ``add with date range``() =
 [<Test>]
 let ``add with date range with note``() = 
   let thirdJulySlotToFifth = createDate 2015 7 3 |> createSlot 3
-  parseOffski "add 3rd July - 5th July #Magaloof" == Add(SlotWithNote(thirdJulySlotToFifth, "Magaloof"))
+  parseOffski "add 3rd July - 5th July #Magaloof with the lads" == Add(SlotWithNote(thirdJulySlotToFifth, "Magaloof with the lads"))
 
 [<Test>]
 let ``add with date range with year and note``() = 
