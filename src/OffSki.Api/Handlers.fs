@@ -1,20 +1,24 @@
 ﻿module Handlers
 
-let createDtoFromUserIdAndOptions userId (slot : Slot) = 
+let createDtoFromUserIdAndSlot (userId, slot : Slot, note) = 
   { When = System.DateTime(slot.When.Year, slot.When.Month, slot.When.Day)
     Days = slot.Days
-    Note = null
+    Note = 
+      match note with
+      | Some s -> s
+      | _ -> null
     UserId = userId }
 
-let createDto createDtoFromUserIdAndOptions = 
+let createDtoFromUserIdAndOptions = 
   function 
-  | userId, Slot slot -> createDtoFromUserIdAndOptions userId slot
-  | userId, SlotWithNote(slot, note) -> { createDtoFromUserIdAndOptions userId slot with Note = note }
-  | _ -> failwith "cannot create DTO from this"
+  | userId, Slot slot -> userId, slot, None
+  | userId, SlotWithNote(slot, note) -> userId, slot, Some note
+  | arg -> failwithf "cannot create DTO from this %+A" arg
 
-let handle userId command store = 
-  match command with
-  | Add options -> store (userId, options)
-  ()
+let createUserIdAndOptions userId = 
+  function
+  | Add options -> userId, options
 
-let store dbStore = createDto createDtoFromUserIdAndOptions >> dbStore
+let createDto userId = createUserIdAndOptions userId >> createDtoFromUserIdAndOptions >> createDtoFromUserIdAndSlot
+
+let handle store userId text = Parser.parseOffski text |> createDto userId |> store.Save

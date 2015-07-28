@@ -4,4 +4,5 @@ source https://ci.appveyor.com/nuget/mfloryan-5o7478w9cf6s
 source https://ci.ctmers.net/httpAuth/app/nuget/v1/FeedService.svc
 
 nuget Chronic
+nuget FSharp.Core
 nuget nunit
