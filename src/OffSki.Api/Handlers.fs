@@ -19,6 +19,4 @@ let getUserIdAndOptions userId =
   function
   | Add options -> userId, options
 
-let createDto userId = getUserIdAndOptions userId >> getUserIdSlotAndNote >> createDtoFromUserIdSlotAndNote
-
-let handle store userId = Parser.parseOffski >> createDto userId >> store.Save
+let handle store userId = Parser.parseOffski >> getUserIdAndOptions userId >> getUserIdSlotAndNote >> createDtoFromUserIdSlotAndNote >> store.Save
