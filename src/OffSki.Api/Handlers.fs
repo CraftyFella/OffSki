@@ -21,4 +21,4 @@ let createUserIdAndOptions userId =
 
 let createDto userId = createUserIdAndOptions userId >> createDtoFromUserIdAndOptions >> createDtoFromUserIdAndSlot
 
-let handle store userId text = Parser.parseOffski text |> createDto userId |> store.Save
+let handle store userId = Parser.parseOffski >> createDto userId >> store.Save
