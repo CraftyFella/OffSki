@@ -1,6 +1,6 @@
 ﻿module Handlers
 
-let createDtoFromUserIdAndSlot (userId, slot : Slot, note) = 
+let createDtoFromUserIdSlotAndNote (userId, slot : Slot, note) = 
   { When = System.DateTime(slot.When.Year, slot.When.Month, slot.When.Day)
     Days = slot.Days
     Note = 
@@ -9,16 +9,16 @@ let createDtoFromUserIdAndSlot (userId, slot : Slot, note) =
       | _ -> null
     UserId = userId }
 
-let createDtoFromUserIdAndOptions = 
+let getUserIdSlotAndNote = 
   function 
   | userId, Slot slot -> userId, slot, None
   | userId, SlotWithNote(slot, note) -> userId, slot, Some note
   | arg -> failwithf "cannot create DTO from this %+A" arg
 
-let createUserIdAndOptions userId = 
+let getUserIdAndOptions userId = 
   function
   | Add options -> userId, options
 
-let createDto userId = createUserIdAndOptions userId >> createDtoFromUserIdAndOptions >> createDtoFromUserIdAndSlot
+let createDto userId = getUserIdAndOptions userId >> getUserIdSlotAndNote >> createDtoFromUserIdSlotAndNote
 
 let handle store userId = Parser.parseOffski >> createDto userId >> store.Save
