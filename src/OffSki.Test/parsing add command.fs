@@ -1,8 +1,6 @@
 ﻿module ``parsing add command``
 
 open System
-open System.Text.RegularExpressions
-open Chronic
 open Parser
 
 let createSlot (days : int) (from : Date) = 

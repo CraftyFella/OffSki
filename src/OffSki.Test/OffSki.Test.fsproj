@@ -41,10 +41,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="listing.fs" />
     <Compile Include="TestFramework.fs" />
-    <None Include="paket.references" />
+    <Compile Include="listing.fs" />
     <Compile Include="parsing add command.fs" />
+    <None Include="paket.references" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
