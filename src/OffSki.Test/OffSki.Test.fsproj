@@ -41,9 +41,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="listing.fs" />
     <Compile Include="TestFramework.fs" />
     <None Include="paket.references" />
-    <Compile Include="storing an offski.fs" />
     <Compile Include="parsing add command.fs" />
   </ItemGroup>
   <PropertyGroup>
@@ -89,6 +89,7 @@
   <ItemGroup>
     <Reference Include="nunit.framework">
       <HintPath>..\..\packages\NUnit\lib\nunit.framework.dll</HintPath>
+      <Private>True</Private>
       <Paket>True</Paket>
     </Reference>
   </ItemGroup>

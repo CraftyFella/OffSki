@@ -37,10 +37,10 @@ let dateTimeToDate (d : DateTime) = createDate d.Year d.Month d.Day
 let datesToSlot =
   function
   | [| from |] ->
-    Some { When = from |> dateTimeToDate
+    Some { Slot.When = from |> dateTimeToDate
            Days = 1 }
   | [| from; to' |] ->
-    Some { When = from |> dateTimeToDate
+    Some { Slot.When = from |> dateTimeToDate
            Days = (to' - from).TotalDays + 1. |> int }
   | _ -> None
 

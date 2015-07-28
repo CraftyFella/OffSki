@@ -6,7 +6,7 @@ open Chronic
 open Parser
 
 let createSlot (days : int) (from : Date) = 
-  { When = from
+  { Slot.When = from
     Days = days }
 
 let createDay = dateTimeToDate >> createSlot 1

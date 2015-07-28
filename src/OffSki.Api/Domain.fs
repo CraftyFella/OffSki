@@ -1,6 +1,8 @@
 ﻿[<AutoOpen>]
 module Domain
 
+open System
+
 type Date =
     { Year : int
       Month : int
@@ -9,6 +11,12 @@ type Date =
 type Slot =
     { When : Date
       Days : int }
+
+type OffSkiDto =
+    { When : DateTime
+      Days : int
+      Note : string
+      UserId : string }
 
 type Options =
   | Unknown of string
@@ -31,5 +39,7 @@ type UserId = UserId of string
 
 type Result<'a> = Success of 'a | Failure of string
 
-type StoreSlot = UserId -> Slot -> Result<unit>
-type RetrieveSlots = UserId -> Result<Slot seq>
+type toOffSkiDto = UserId * Options -> OffSkiDto
+type fromOffSkiDto = OffSkiDto -> UserId * Options
+type StoreSlot = OffSkiDto -> Result<unit>
+type RetrieveSlots = UserId -> Result<OffSkiDto seq>
