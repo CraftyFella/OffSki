@@ -10,6 +10,7 @@ let createSlot (days : int) (from : Date) =
 let createDay = dateTimeToDate >> createSlot 1
 let today = DateTime.Today |> createDay
 let tomorrow = DateTime.Today.AddDays 1. |> createDay
+let nextYear = DateTime.Today.Year + 1
 
 [<Test>]
 let ``add tomorrow with note``() = parseOffski "add tomorrow #hospital with son" == Add(SlotWithNote(tomorrow, "hospital with son"))
@@ -21,24 +22,24 @@ let ``add tomorrow without note``() = parseOffski "add tomorrow" == Add(Slot tom
 let ``add today with note``() = parseOffski "add today #hospital" == Add(SlotWithNote(today, "hospital"))
 
 [<Test>]
-let ``add with complex date``() = 
-  let thirdJulySlot = createDate 2015 7 3 |> createSlot 1
-  parseOffski "add 3rd July" == Add(Slot thirdJulySlot)
+let ``add with complex date``() =
+  let firstJanuarySlot = createDate nextYear 1 1 |> createSlot 1
+  parseOffski "add 1st January" == Add(Slot firstJanuarySlot)
 
 [<Test>]
 let ``add with date range``() = 
-  let thirdJulySlotToFifth = createDate 2015 7 3 |> createSlot 3
-  parseOffski "add 3rd July - 5th July" == Add(Slot thirdJulySlotToFifth)
+  let firstToThirdJanuarySlot = createDate nextYear 1 1 |> createSlot 3
+  parseOffski "add 1st January - 3rd January" == Add(Slot firstToThirdJanuarySlot)
 
 [<Test>]
 let ``add with date range with note``() = 
-  let thirdJulySlotToFifth = createDate 2015 7 3 |> createSlot 3
-  parseOffski "add 3rd July - 5th July #Magaloof with the lads" == Add(SlotWithNote(thirdJulySlotToFifth, "Magaloof with the lads"))
+  let firstToThirdJanuarySlot = createDate nextYear 1 1 |> createSlot 3
+  parseOffski "add 1st January - 3rd January #Magaloof with the lads" == Add(SlotWithNote(firstToThirdJanuarySlot, "Magaloof with the lads"))
 
 [<Test>]
 let ``add with date range with year and note``() = 
-  let thirdJulySlotToFifth = createDate 2016 7 3 |> createSlot 3
-  parseOffski "add 3rd July 2016 - 5th July 2016 #Magaloof" == Add(SlotWithNote(thirdJulySlotToFifth, "Magaloof"))
+  let firstToThirdJanuarySlot = createDate 2016 1 1 |> createSlot 3
+  parseOffski "add 1st January 2016 - 3rd January #Magaloof" == Add(SlotWithNote(firstToThirdJanuarySlot, "Magaloof"))
 
 [<Test>]
 let ``unknown command``() = parseOffski "boom" == Unknown "boom"
