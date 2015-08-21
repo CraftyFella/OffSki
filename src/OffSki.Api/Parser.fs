@@ -36,10 +36,10 @@ let dateTimeToDate (d : DateTime) = createDate d.Year d.Month d.Day
 
 let datesToSlot =
   function
-  | [| from |] ->
+  | Some [| from |] ->
     Some { Slot.When = from |> dateTimeToDate
            Days = 1 }
-  | [| from; to' |] ->
+  | Some [| from; to' |] ->
     Some { Slot.When = from |> dateTimeToDate
            Days = (to' - from).TotalDays + 1. |> int }
   | _ -> None
@@ -49,36 +49,30 @@ let parseDates =
   >> Array.map (textToSpan >> spanToDateTime)
   >> Array.choose id
 
-let toOption none =
-  function
-  | x when x = none -> None
-  | x -> Some x
+let stringToSlot datesToSlot =
+   Option.lift ""
+  >> Option.bind (parseDates >> Option.lift [||])
+  >> datesToSlot
 
-let arrayToOption = toOption [||]
-let stringToOption = toOption ""
-
-let stringToSlot =
-  stringToOption
-  >> Option.bind (parseDates >> arrayToOption)
-  >> Option.bind datesToSlot
-
-let parseAdd command =
+let parseAdd stringToSlot command =
   let options =
     match command with
     | Add(Options.Unknown options) -> options
 
   let parts = Regex.Match(options, "(?<date>[^#]*)#?(?<note>.*)").Groups
   let slot = parts.["date"].Value |> stringToSlot
-  let note = parts.["note"].Value |> stringToOption
+  let note = parts.["note"].Value |> Option.lift ""
 
-  match (slot, note) with
+  match slot, note with
     | Some s, Some n -> SlotWithNote (s, n) |> Add
     | Some s, None -> Slot s |> Add
     | _ -> Add Invalid
 
-let handleCommand =
+let handleCommand parseAdd =
   function
   | Add _ as command -> parseAdd command
-  | Unknown message -> Unknown message 
+  | Unknown message -> Unknown message
 
-let parseOffski = parseCommand >> handleCommand
+let handleCommand' = stringToSlot datesToSlot |> parseAdd |> handleCommand
+
+let parseOffski = parseCommand >> handleCommand'
