@@ -34,7 +34,7 @@ let parseCommand message =
 
 let dateTimeToDate (d : DateTime) = createDate d.Year d.Month d.Day
 
-let datesToSlot =
+let datesToSlot (dateTimeToDate : DateTime -> Date) =
   function
   | Some [| from |] ->
     Some { Slot.When = from |> dateTimeToDate
@@ -44,14 +44,14 @@ let datesToSlot =
            Days = (to' - from).TotalDays + 1. |> int }
   | _ -> None
 
-let parseDates =
+let stringToDates =
   split "-"
   >> Array.map (textToSpan >> spanToDateTime)
   >> Array.choose id
 
-let stringToSlot datesToSlot =
+let stringToSlot stringToDates datesToSlot  =
    Option.lift ""
-  >> Option.bind (parseDates >> Option.lift [||])
+  >> Option.bind (stringToDates >> Option.lift [||])
   >> datesToSlot
 
 let parseAdd stringToSlot command =
@@ -73,6 +73,7 @@ let handleCommand parseAdd =
   | Add _ as command -> parseAdd command
   | Unknown message -> Unknown message
 
-let handleCommand' = stringToSlot datesToSlot |> parseAdd |> handleCommand
+let datesToSlot' = datesToSlot dateTimeToDate
+let handleCommand' = stringToSlot stringToDates datesToSlot' |> parseAdd |> handleCommand
 
 let parseOffski = parseCommand >> handleCommand'
