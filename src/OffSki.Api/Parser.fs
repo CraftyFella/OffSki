@@ -74,6 +74,9 @@ let handleCommand parseAdd =
   | Unknown message -> Unknown message
 
 let datesToSlot' = datesToSlot dateTimeToDate
-let handleCommand' = stringToSlot stringToDates datesToSlot' |> parseAdd |> handleCommand
+let stringToSlot' = stringToSlot stringToDates datesToSlot'
+let parseAdd' = parseAdd stringToSlot'
+
+let handleCommand' = handleCommand parseAdd'
 
 let parseOffski = parseCommand >> handleCommand'
